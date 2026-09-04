@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <base href="../">
+  <title>Town visual fixture</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="visual">
+  <main id="app"></main>
+  <script src="scenarios/demo.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/game.js"></script>
+  <script>
+    const fixture = GameApp.mount(document.querySelector("#app"), DEMO_SCENARIO, { autoStart: true });
+    if (location.search.includes("role")) {
+      // Keep the automatic role reveal on screen.
+    } else if (location.search.includes("dialogue")) {
+      fixture.engine.wakeUp();
+      fixture.engine.startConversation("ira");
+      fixture.renderDialogue();
+    } else {
+      fixture.engine.wakeUp();
+      fixture.renderTown();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 800" role="img" aria-label="Ира, нейтральное выражение">
+  <rect width="640" height="800" fill="#342a38"/><circle cx="510" cy="122" r="154" fill="#b99670" opacity=".13"/>
+  <path d="M94 800c12-181 88-272 226-272s214 91 226 272" fill="#5f3444"/><path d="M232 510h176l28 111-116 66-116-66z" fill="#d7aa86"/>
+  <ellipse cx="320" cy="340" rx="143" ry="178" fill="#dcb18d"/><path d="M178 348c-11-176 56-244 148-244 105 0 159 74 143 249-25-45-44-102-47-148-66 59-139 79-244 80z" fill="#30252c"/>
+  <path d="M234 334q38-19 72 0M337 334q39-19 73 0" fill="none" stroke="#4b3031" stroke-width="10" stroke-linecap="round"/><circle cx="272" cy="353" r="8" fill="#241b1d"/><circle cx="373" cy="353" r="8" fill="#241b1d"/>
+  <path d="M291 432q30 10 59 0" fill="none" stroke="#8f5556" stroke-width="8" stroke-linecap="round"/>
+  <rect x="30" y="31" width="580" height="738" rx="3" fill="none" stroke="#d9bb7b" opacity=".38"/><text x="52" y="735" fill="#eadfc6" font-family="Georgia,serif" font-size="40">ИРА</text><text x="53" y="765" fill="#c9a45f" font-family="Arial,sans-serif" font-size="14" letter-spacing="4">ПРОТОТИП · НЕЙТРАЛЬНО</text>
+</svg>

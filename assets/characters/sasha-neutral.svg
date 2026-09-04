@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 800" role="img" aria-label="Саша, нейтральное выражение">
+  <rect width="640" height="800" fill="#28312d"/><circle cx="104" cy="130" r="150" fill="#98b190" opacity=".12"/>
+  <path d="M80 800c18-179 98-268 240-268s222 89 240 268" fill="#405347"/><path d="M238 506h164l31 116-113 63-113-63z" fill="#d0a078"/>
+  <ellipse cx="320" cy="337" rx="140" ry="176" fill="#d8a982"/><path d="M178 311c8-147 75-217 154-217 89 0 144 70 138 197-45-49-102-77-167-82-44 17-85 51-125 102z" fill="#46372d"/>
+  <path d="M232 330q38-15 75 0M338 330q38-15 74 0" fill="none" stroke="#5d4032" stroke-width="10" stroke-linecap="round"/><circle cx="273" cy="351" r="8" fill="#2a211d"/><circle cx="375" cy="351" r="8" fill="#2a211d"/>
+  <path d="M290 435q31 7 62 0" fill="none" stroke="#8c5850" stroke-width="8" stroke-linecap="round"/><circle cx="320" cy="347" r="77" fill="none" stroke="#5c554d" stroke-width="4" opacity=".75"/><path d="M320 270v154M243 347h154" stroke="#5c554d" stroke-width="3" opacity=".6"/>
+  <rect x="30" y="31" width="580" height="738" fill="none" stroke="#adc6a9" opacity=".32"/><text x="52" y="735" fill="#eadfc6" font-family="Georgia,serif" font-size="40">САША</text><text x="53" y="765" fill="#a8bda4" font-family="Arial,sans-serif" font-size="14" letter-spacing="4">ПРОТОТИП · НЕЙТРАЛЬНО</text>
+</svg>

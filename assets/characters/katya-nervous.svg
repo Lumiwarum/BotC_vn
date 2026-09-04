@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 800" role="img" aria-label="Катя нервничает">
+  <rect width="640" height="800" fill="#33302d"/><path d="M640 0L0 250V0z" fill="#7897a5" opacity=".12"/>
+  <path d="M82 800c13-178 92-267 238-267s225 89 238 267" fill="#5c5148"/><path d="M236 505h168l26 114-110 66-110-66z" fill="#e0b68d"/>
+  <ellipse cx="320" cy="334" rx="141" ry="177" fill="#e5bd96"/><path d="M175 371c-10-183 43-271 146-271 114 0 166 88 146 277-24-40-42-93-47-151-65 38-143 49-233 39 6 50 1 83-12 106z" fill="#8b623f"/>
+  <path d="M229 318l78 20M338 338l78-20" stroke="#704835" stroke-width="10" stroke-linecap="round"/><circle cx="273" cy="356" r="10" fill="#2d211b"/><circle cx="375" cy="356" r="10" fill="#2d211b"/>
+  <path d="M288 444q33-13 67 0" fill="none" stroke="#a55e59" stroke-width="8" stroke-linecap="round"/><circle cx="451" cy="386" r="9" fill="#81adc0" opacity=".8"/>
+  <rect x="30" y="31" width="580" height="738" fill="none" stroke="#8fb3be" opacity=".42"/><text x="52" y="735" fill="#eadfc6" font-family="Georgia,serif" font-size="40">КАТЯ</text><text x="53" y="765" fill="#a6c8cf" font-family="Arial,sans-serif" font-size="14" letter-spacing="4">ПРОТОТИП · НЕРВНО</text>
+</svg>

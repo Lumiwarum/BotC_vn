@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 800" role="img" aria-label="Макс, нейтральное выражение">
+  <rect width="640" height="800" fill="#273238"/><path d="M0 90L640 310V0H0z" fill="#78939b" opacity=".11"/>
+  <path d="M78 800c18-180 98-269 242-269s224 89 242 269" fill="#303f49"/><path d="M237 493h166l28 125-111 66-111-66z" fill="#c99470"/>
+  <ellipse cx="320" cy="326" rx="143" ry="177" fill="#d3a17c"/><path d="M178 314c0-151 61-220 147-220 103 0 153 65 151 210-37-73-90-111-163-114-48 26-89 68-135 124z" fill="#1f252a"/>
+  <path d="M233 318q35-13 72 0M338 318q38-13 74 0" fill="none" stroke="#4c342b" stroke-width="11" stroke-linecap="round"/><circle cx="270" cy="341" r="8" fill="#222"/><circle cx="375" cy="341" r="8" fill="#222"/>
+  <path d="M287 426q34 8 69 0" fill="none" stroke="#815049" stroke-width="8" stroke-linecap="round"/><path d="M225 445q95 62 190 0" fill="none" stroke="#7d523f" stroke-width="18" opacity=".3"/>
+  <rect x="30" y="31" width="580" height="738" fill="none" stroke="#a8c7cc" opacity=".3"/><text x="52" y="735" fill="#eadfc6" font-family="Georgia,serif" font-size="40">МАКС</text><text x="53" y="765" fill="#9dbac2" font-family="Arial,sans-serif" font-size="14" letter-spacing="4">ПРОТОТИП · НЕЙТРАЛЬНО</text>
+</svg>

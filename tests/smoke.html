@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <base href="../">
+  <title>Game smoke test</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="smoke">
+  <main id="app"></main>
+  <pre id="smoke-results">RUNNING</pre>
+  <script src="scenarios/demo.js"></script>
+  <script src="scenarios/second.js"></script>
+  <script src="scenarios/library.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/game.js"></script>
+  <script>
+    (function () {
+      const results = [];
+      function assert(condition, message) {
+        if (!condition) throw new Error(message);
+        results.push(`PASS: ${message}`);
+      }
+      function click(selector, index = 0) {
+        const element = document.querySelectorAll(selector)[index];
+        if (!element) throw new Error(`Missing element: ${selector}[${index}]`);
+        element.click();
+      }
+      try {
+        const app = GameApp.mount(document.querySelector("#app"), BOTC_SCENARIOS);
+        assert(document.querySelector(".start-screen"), "start screen renders");
+        assert(document.querySelectorAll("[data-select-scenario]").length === 2, "scenario library offers two stories");
+        assert(document.querySelector(".clock-sigil").textContent.includes("XII"), "clock face marks twelve with XII");
+        click('[data-action="random-scenario"]');
+        assert(document.querySelector('[data-action="start"]').textContent.includes("Тихий заговор"), "random button selects a different bundled story");
+        click('[data-select-scenario="0"]');
+        click('[data-select-scenario="1"]');
+        assert(document.querySelector('[data-action="start"]').textContent.includes("Тихий заговор"), "second scenario can be selected");
+        click('[data-select-scenario="0"]');
+        click('[data-action="start"]');
+        assert(document.querySelector(".role-screen"), "role reveal renders");
+        click('[data-action="wake"]');
+        assert(document.querySelectorAll("[data-character]").length === 4, "town has four characters");
+        assert(document.querySelector(".town-player-seat"), "town shows the protagonist as the fifth player");
+
+        click('[data-character="ira"]');
+        assert(app.engine.state.currentNodeId === "ira_start", "Ira starts at the default node");
+        click('[data-choice="0"]');
+        assert(app.engine.state.variables.toldIraRole === true, "choice changes scenario state");
+        click('[data-choice="0"]');
+        assert(document.querySelector(".event-screen"), "visible meanwhile event renders");
+        assert(app.engine.state.variables.maxKnowsPlayerRole === true, "hidden NPC event changes state");
+
+        click('[data-action="continue"]');
+        click('[data-character="max"]');
+        assert(app.engine.state.currentNodeId === "max_knows", "later dialogue reacts to hidden event");
+        click('[data-choice="2"]');
+        click('[data-choice="0"]');
+        assert(app.engine.state.conversationsRemaining === 1, "conversation counter decreases");
+
+        click('[data-character="ira"]');
+        assert(app.engine.state.currentNodeId === "ira_repeat", "same NPC can be revisited with new dialogue");
+        click('[data-choice="0"]');
+        click('[data-choice="0"]');
+        assert(document.querySelector(".event-screen"), "final bell interstitial renders");
+        click('[data-action="continue"]');
+        assert(document.querySelectorAll("[data-nominee]").length === 5, "nomination offers four characters and nobody");
+        click('[data-nominee="max"]');
+        assert(document.querySelector(".ending-screen--victory"), "correct nomination reaches victory ending");
+        assert(document.querySelectorAll(".role-reveal li").length === 5, "ending reveals the protagonist and four other players");
+
+        click('[data-action="restart"]');
+        assert(document.querySelector(".role-screen"), "restart returns to role reveal");
+        assert(app.engine.state.totalConversations === 0 && app.engine.state.conversationsRemaining === 3, "restart fully resets state");
+
+        app.destroy();
+        const secondApp = GameApp.mount(document.querySelector("#app"), SECOND_SCENARIO);
+        click('[data-action="start"]');
+        click('[data-action="wake"]');
+        click('[data-character="max"]');
+        click('[data-choice="0"]');
+        click('[data-choice="0"]');
+        assert(secondApp.engine.state.variables.iraKnowsPlayerRole === true, "second scenario propagates the revealed role to the Demon");
+        click('[data-action="continue"]');
+        click('[data-character="ira"]');
+        assert(secondApp.engine.state.currentNodeId === "ira_knows", "second scenario reacts to evil coordination");
+        click('[data-choice="0"]');
+        click('[data-choice="0"]');
+        click('[data-character="sasha"]');
+        click('[data-choice="0"]');
+        click('[data-choice="0"]');
+        click('[data-action="continue"]');
+        click('[data-nominee="ira"]');
+        assert(document.querySelector(".ending-screen--victory"), "second scenario reaches its distinct Demon victory check");
+        document.querySelector("#smoke-results").textContent = results.join("\n") + "\nALL GAME TESTS PASSED";
+        document.body.dataset.smoke = "passed";
+      } catch (error) {
+        document.querySelector("#smoke-results").textContent = results.join("\n") + `\nFAIL: ${error.stack}`;
+        document.body.dataset.smoke = "failed";
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <base href="../">
+  <title>Editor smoke test</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="editor">
+  <main id="editor-app"></main>
+  <main id="preview-app" class="app-shell is-hidden"></main>
+  <pre id="smoke-results">RUNNING</pre>
+  <script src="scenarios/demo.js"></script>
+  <script src="scenarios/second.js"></script>
+  <script src="scenarios/library.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/editor.js"></script>
+  <script>
+    (function () {
+      const results = [];
+      function assert(condition, message) {
+        if (!condition) throw new Error(message);
+        results.push(`PASS: ${message}`);
+      }
+      function click(selector) {
+        const element = document.querySelector(selector);
+        if (!element) throw new Error(`Missing element: ${selector}`);
+        element.click();
+      }
+      try {
+        assert(document.querySelector('[data-tab="overview"].is-active'), "editor opens on overview");
+        assert(document.querySelectorAll("#editor-library-select option").length === 2, "editor exposes both bundled scenarios");
+        const title = document.querySelector('[data-bind="meta.title"]');
+        title.value = "Тестовый город";
+        title.dispatchEvent(new Event("input", { bubbles: true }));
+
+        click('[data-tab="characters"]');
+        assert(document.querySelectorAll(".character-editor-card").length === 4, "four characters are editable");
+        click('[data-action="add-character"]');
+        assert(document.querySelectorAll(".character-editor-card").length === 5, "character creation works");
+
+        click('[data-tab="dialogues"]');
+        assert(document.querySelector(".node-editor"), "dialogue node editor renders");
+        const beforeChoices = document.querySelectorAll(".choice-editor").length;
+        click('[data-action="add-choice"]');
+        assert(document.querySelectorAll(".choice-editor").length === beforeChoices + 1, "response choice can be added");
+
+        click('[data-tab="graph"]');
+        assert(document.querySelectorAll(".graph-node").length > 0, "dialogue graph renders nodes");
+        assert(document.querySelector(".validation-summary"), "graph exposes structural validation");
+        const editedNode = scenarioEditor.currentNode();
+        editedNode.choices[0].goto = "missing-node";
+        editedNode.choices[0].endConversation = false;
+        scenarioEditor.render();
+        assert(document.querySelector(".validation-summary.has-errors"), "graph validator detects a broken transition");
+        assert(document.querySelector(".graph-node.is-broken"), "broken source node is highlighted");
+        delete editedNode.choices[0].goto;
+        editedNode.choices[0].endConversation = true;
+        scenarioEditor.render();
+
+        click('[data-tab="events"]');
+        const beforeEvents = document.querySelectorAll("[data-remove-event]").length;
+        click('[data-action="add-event"]');
+        assert(document.querySelectorAll("[data-remove-event]").length === beforeEvents + 1, "NPC event can be added");
+
+        click('[data-action="preview"]');
+        assert(document.querySelector("#preview-app .role-screen"), "editor preview uses the game renderer");
+        click('[data-action="exit-preview"]');
+        assert(!document.querySelector("#editor-app").classList.contains("is-hidden"), "preview returns to editor");
+
+        document.querySelector("#smoke-results").textContent = results.join("\n") + "\nALL EDITOR TESTS PASSED";
+        document.body.dataset.smoke = "passed";
+      } catch (error) {
+        document.querySelector("#smoke-results").textContent = results.join("\n") + `\nFAIL: ${error.stack}`;
+        document.body.dataset.smoke = "failed";
+      }
+    })();
+  </script>
+</body>
+</html>
