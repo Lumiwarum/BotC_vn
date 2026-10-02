@@ -11,7 +11,9 @@
   <pre id="smoke-results">RUNNING</pre>
   <script src="scenarios/demo.js"></script>
   <script src="scenarios/second.js"></script>
+  <script src="scenarios/third.js"></script>
   <script src="scenarios/library.js"></script>
+  <script src="js/roles.js"></script>
   <script src="js/engine.js"></script>
   <script src="js/game.js"></script>
   <script>
@@ -26,13 +28,30 @@
         if (!element) throw new Error(`Missing element: ${selector}[${index}]`);
         element.click();
       }
+      const realRandom = Math.random;
+      // Click through a day: the player only picks his own nomination.
+      function playOutDay() {
+        for (let step = 0; step < 12; step += 1) {
+          if (document.querySelector('[data-nominate="nobody"]')) { click('[data-nominate="nobody"]'); continue; }
+          if (document.querySelector('[data-action="next"]')) { click('[data-action="next"]'); continue; }
+          break;
+        }
+        click('[data-action="close"]');
+        if (document.querySelector('[data-action="night-result"]')) click('[data-action="night-result"]');
+      }
       try {
+        Math.random = () => 0;
         const app = GameApp.mount(document.querySelector("#app"), BOTC_SCENARIOS);
         assert(document.querySelector(".start-screen"), "start screen renders");
-        assert(document.querySelectorAll("[data-select-scenario]").length === 2, "scenario library offers two stories");
+        assert(document.querySelectorAll("[data-select-scenario]").length === 3, "scenario library offers three stories");
         assert(document.querySelector(".clock-sigil").textContent.includes("XII"), "clock face marks twelve with XII");
         click('[data-action="random-scenario"]');
-        assert(document.querySelector('[data-action="start"]').textContent.includes("Тихий заговор"), "random button selects a different bundled story");
+        assert(app.selectedScenarioIndex === 0 && app.randomSelectionIndex === 0, "random button can draw the story already selected");
+        assert(document.querySelector(".scenario-selector.is-rolling"), "random draw plays a visible roll");
+        Math.random = () => 0.99;
+        click('[data-action="random-scenario"]');
+        assert(app.selectedScenarioIndex === 2, "random button draws from the whole library");
+        Math.random = () => 0;
         click('[data-select-scenario="0"]');
         click('[data-select-scenario="1"]');
         assert(document.querySelector('[data-action="start"]').textContent.includes("Тихий заговор"), "second scenario can be selected");
@@ -41,7 +60,7 @@
         assert(document.querySelector(".role-screen"), "role reveal renders");
         click('[data-action="wake"]');
         assert(document.querySelectorAll("[data-character]").length === 4, "town has four characters");
-        assert(document.querySelector(".town-player-seat"), "town shows the protagonist as the fifth player");
+        assert(document.querySelector(".town-player-seat"), "town shows the protagonist among the featured players");
 
         click('[data-character="ira"]');
         assert(app.engine.state.currentNodeId === "ira_start", "Ira starts at the default node");
@@ -59,14 +78,18 @@
         assert(app.engine.state.conversationsRemaining === 1, "conversation counter decreases");
 
         click('[data-character="ira"]');
-        assert(app.engine.state.currentNodeId === "ira_repeat", "same NPC can be revisited with new dialogue");
-        click('[data-choice="0"]');
+        assert(app.engine.trustOf("ira") >= 3, "telling the truth and keeping her secret earns real trust");
+        assert(app.engine.state.currentNodeId === "ira_allied", "trust opens a conversation the first visit cannot reach");
         click('[data-choice="0"]');
         assert(document.querySelector(".event-screen"), "final bell interstitial renders");
         click('[data-action="continue"]');
-        assert(document.querySelectorAll("[data-nominee]").length === 5, "nomination offers four characters and nobody");
-        click('[data-nominee="max"]');
-        assert(document.querySelector(".ending-screen--victory"), "correct nomination reaches victory ending");
+        assert(document.querySelectorAll("[data-decision]").length === 5, "decision offers four contacts and staying alone");
+        click('[data-decision="ira"]');
+        assert(app.engine.state.phase === "vote", "the good episodes end on the same day of nominations");
+        assert(document.querySelector(".day-block").textContent.includes("пока никто"), "the day opens with an empty block");
+        playOutDay();
+        assert(app.engine.state.vote.executed === "nobody", "two hands are not a majority, so nobody hangs");
+        assert(document.querySelector(".ending-screen--victory"), "a quiet day with a real ally is a win for a good player");
         assert(document.querySelectorAll(".role-reveal li").length === 5, "ending reveals the protagonist and four other players");
 
         click('[data-action="restart"]');
@@ -86,12 +109,148 @@
         assert(secondApp.engine.state.currentNodeId === "ira_knows", "second scenario reacts to evil coordination");
         click('[data-choice="0"]');
         click('[data-choice="0"]');
-        click('[data-character="sasha"]');
+        click('[data-character="katya"]');
         click('[data-choice="0"]');
-        click('[data-choice="0"]');
+        click('[data-choice="2"]');
         click('[data-action="continue"]');
-        click('[data-nominee="ira"]');
-        assert(document.querySelector(".ending-screen--victory"), "second scenario reaches its distinct Demon victory check");
+        assert(secondApp.engine.voteMajority() === 2, "final day needs two hands from three living players");
+        assert(!secondApp.engine.allyRequirement("sasha").allowed, "a dead player cannot be recruited as an ally");
+        click('[data-decision="katya"]');
+        click('[data-nominate="ira"]');
+        while (document.querySelector('[data-action="next"]')) click('[data-action="next"]');
+        click('[data-action="close"]');
+        assert(secondApp.engine.state.vote.executed === "ira", "the living ally helps execute the Demon");
+        assert(document.querySelector(".ending-screen--victory"), "the decisive execution wins for good");
+
+        // The trap of episode II, checked on a table nobody has talked to yet.
+        const fresh = new VNEngine(SECOND_SCENARIO);
+        fresh.wakeUp();
+        fresh.state.phase = "decision";
+        fresh.approachAlly("nobody");
+        assert(fresh.nextNpcNomination() === null, "dead players cannot nominate on the last day");
+        assert(fresh.wouldVote("max", "katya", "ira") && !fresh.wouldVote("sasha", "katya", "ira"), "a dead player spends his last vote only on a conviction");
+        fresh.playerNominate("nobody");
+        fresh.endDay();
+        assert(fresh.state.vote.nightDeath === "katya", "skipping the execution triggers the final night kill");
+        secondApp.destroy();
+        const evilApp = GameApp.mount(document.querySelector("#app"), THIRD_SCENARIO);
+        click('[data-action="start"]');
+        assert(document.querySelector(".team-badge--evil"), "evil protagonist is visibly evil");
+        assert(!document.querySelector(".night-name-tags"), "evil role reveal invents no pair of suspects");
+        assert(document.querySelector(".role-term .role-tip__icon"), "a role mentioned in the text explains itself with its own token");
+        assert(!document.querySelector(".asset-credit"), "credits stay out of gameplay");
+        click('[data-action="wake"]');
+        click('[data-character="max"]');
+        click('[data-choice="2"]');
+        click('[data-choice="0"]');
+        while (document.querySelector('[data-action="continue"]')) click('[data-action="continue"]');
+        click('[data-character="sasha"]');
+        click('[data-choice="1"]');
+        click('[data-choice="0"]');
+        click('[data-character="katya"]');
+        click('[data-choice="0"]');
+        click('[data-choice="0"]');
+        while (document.querySelector('[data-action="continue"]')) click('[data-action="continue"]');
+        Math.random = () => 0;
+        click('[data-decision="max"]');
+        assert(evilApp.engine.state.phase === "vote", "choosing whom to approach opens the day");
+        assert(evilApp.engine.state.approach.outcome === "accepted", "a certain roll lands the offer");
+        assert(document.querySelector(".day-block"), "the day screen shows what stands on the block");
+        while (document.querySelector('[data-action="next"]')) click('[data-action="next"]');
+        click('[data-nominate="katya"]');
+        assert(document.querySelector(".day-tally"), "a nomination is counted in the open");
+        assert(!document.querySelector("[data-hand]"), "the player never votes hand by hand");
+        while (document.querySelector('[data-action="next"]')) click('[data-action="next"]');
+        click('[data-action="close"]');
+        assert(document.querySelector(".vote-result"), "the ending shows the day it came from");
+        assert(!document.querySelector(".ending-screen").textContent.includes("Добро побеждает"), "evil success is not labeled as good victory");
+        click('[data-action="restart"]');
+        assert(evilApp.engine.state.approach === null && evilApp.engine.state.day === null, "replay clears the approach and the day");
+        assert(!evilApp.engine.state.variables.sharedSafeBluff && evilApp.engine.state.decision === null, "evil replay clears secrets and final choice");
+
+        function armed(trustByCharacter, suspicionRows) {
+          const engine = new VNEngine(THIRD_SCENARIO);
+          engine.wakeUp();
+          Object.entries(trustByCharacter).forEach(([characterId, value]) =>
+            engine.applyTrust({type: "trust", characterId, value}));
+          Object.entries(suspicionRows || {}).forEach(([characterId, row]) =>
+            Object.entries(row).forEach(([targetId, value]) =>
+              engine.applySuspicion({type: "suspicion", characterId, targetId, value})));
+          engine.state.phase = "decision";
+          return engine;
+        }
+
+        // Play out the day: the player only picks his own nomination.
+        function playDay(engine, target) {
+          for (let step = 0; step < 12; step += 1) {
+            const beat = engine.dayBeat();
+            if (beat.type === "dayOver") break;
+            if (beat.type === "playerTurn") engine.playerNominate(target);
+            else engine.resolvePending();
+          }
+          return engine.endDay();
+        }
+
+        Math.random = () => 0.99;
+        let engine = armed({sasha: -1});
+        engine.approachAlly("sasha");
+        assert(engine.state.approach.outcome === "betrayed", "a refusal from someone hostile becomes a betrayal");
+        assert(engine.trustOf("katya") < 0, "betrayal costs trust with everyone else at the table");
+        assert(engine.dayBeat().targetId === "you", "the man who sold you out nominates you before you speak");
+        assert(engine.playerAutoHand("ira") === false, "without an ally the player keeps out of other people's nominations");
+
+        engine = armed({katya: -4});
+        assert(engine.approachOdds("katya").hopeless, "someone this hostile will not even hear the offer");
+        assert(engine.approachOdds("max").chance > 0.4, "a neutral player is still worth asking");
+
+        Math.random = () => 0;
+        engine = armed({max: 2, ira: 2, katya: 2});
+        engine.approachAlly("max");
+        const won = playDay(engine, "sasha");
+        assert(engine.state.vote.executed === "sasha", "a table that trusts you follows your nomination");
+        assert(won.tone === "victory", "executing a good player is a win for the Leviathan");
+
+        engine = armed({max: 2, ira: 2, katya: 2});
+        engine.approachAlly("max");
+        engine.playerNominate("sasha");
+        assert(engine.state.day.block.targetId === "sasha" && engine.state.day.log[0].votes >= 3, "your own nomination puts someone on the block");
+        assert(!engine.nominationTargets().includes("sasha"), "the same person cannot be nominated twice in a day");
+        let refused = false;
+        try { engine.playerNominate("ira"); } catch (_) { refused = true; }
+        assert(refused, "you only get one nomination per day");
+
+        Math.random = () => 0.99;
+        engine = armed({sasha: -2, katya: -2, ira: -2});
+        engine.approachAlly("katya");
+        const lost = playDay(engine, "nobody");
+        assert(engine.state.vote.executed === "you", "a table that distrusts you puts you on the block");
+        assert(lost.tone === "defeat", "being executed is a defeat");
+
+        Math.random = () => 0;
+        engine = armed({max: 3, ira: 2, katya: 2});
+        engine.approachAlly("max");
+        const burned = playDay(engine, "max");
+        const call = engine.state.vote.log[0];
+        assert(!call.voters.includes("max"), "an ally never raises a hand for his own execution");
+        assert(engine.state.vote.pactBroken, "naming your own ally breaks the pact");
+        assert(engine.suspicionOf("max", "you") > 0, "a burned ally turns on you");
+        assert(burned.id === "turned-on-minion", "burning your own minion has its own ending");
+
+        engine = armed({max: 2, ira: 2, katya: 2}, {max: {ira: 2}});
+        engine.approachAlly("max");
+        assert(engine.playerAutoHand("ira"), "your hand follows the ally you agreed to play with");
+        assert(!engine.playerAutoHand("max"), "an automatic hand never betrays your own ally");
+
+        assert(typeof BOTC_ROLES !== "undefined" && BOTC_ROLES.some((role) => role.name === "Левиафан"), "the shared role glossary is loaded");
+        const textOnly = ["Горожанин", "Изгой", "Приспешник", "Демон", "Рассказчик"];
+        assert(BOTC_ROLES.every((role) => textOnly.includes(role.name) || role.icon), "every role in the glossary carries its token art");
+        Math.random = realRandom;
+
+        assert(THIRD_SCENARIO.reveal.find(r => r.characterId === "sasha").team === "Добро", "a bluff never changes the Shugenja's alignment");
+        let rejected = false;
+        try { new VNEngine(THIRD_SCENARIO).endDay(); } catch (_) { rejected = true; }
+        assert(rejected, "the day cannot be closed before it is played");
+
         document.querySelector("#smoke-results").textContent = results.join("\n") + "\nALL GAME TESTS PASSED";
         document.body.dataset.smoke = "passed";
       } catch (error) {

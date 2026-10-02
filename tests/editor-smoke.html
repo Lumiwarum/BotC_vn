@@ -12,7 +12,9 @@
   <pre id="smoke-results">RUNNING</pre>
   <script src="scenarios/demo.js"></script>
   <script src="scenarios/second.js"></script>
+  <script src="scenarios/third.js"></script>
   <script src="scenarios/library.js"></script>
+  <script src="js/roles.js"></script>
   <script src="js/engine.js"></script>
   <script src="js/game.js"></script>
   <script src="js/editor.js"></script>
@@ -30,7 +32,7 @@
       }
       try {
         assert(document.querySelector('[data-tab="overview"].is-active'), "editor opens on overview");
-        assert(document.querySelectorAll("#editor-library-select option").length === 2, "editor exposes both bundled scenarios");
+        assert(document.querySelectorAll("#editor-library-select option").length === 3, "editor exposes all three bundled scenarios");
         const title = document.querySelector('[data-bind="meta.title"]');
         title.value = "Тестовый город";
         title.dispatchEvent(new Event("input", { bubbles: true }));
@@ -64,6 +66,11 @@
         click('[data-action="add-event"]');
         assert(document.querySelectorAll("[data-remove-event]").length === beforeEvents + 1, "NPC event can be added");
 
+        click('[data-tab="endings"]');
+        const question = document.querySelector('[data-bind="decision.title"]');
+        question.value = "Кому доверить план?";
+        question.dispatchEvent(new Event("input", { bubbles: true }));
+        assert(scenarioEditor.draft.decision.title === "Кому доверить план?", "final choice is editable");
         click('[data-action="preview"]');
         assert(document.querySelector("#preview-app .role-screen"), "editor preview uses the game renderer");
         click('[data-action="exit-preview"]');

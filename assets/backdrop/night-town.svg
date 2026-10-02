@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice">
+  <!-- Night town skyline with a clocktower. Drawn for the club visual novel; no external source. -->
+  <defs>
+    <radialGradient id="halo" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f2e3c2" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#f2e3c2" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="dial" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f0c77a" stop-opacity="0.55"/>
+      <stop offset="0.6" stop-color="#c9a45f" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#c9a45f" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a2230" stop-opacity="0"/>
+      <stop offset="1" stop-color="#3a2230" stop-opacity="0.35"/>
+    </linearGradient>
+  </defs>
+
+  <g fill="#efe4cc">
+    <circle cx="120" cy="60" r="1.2" opacity="0.5"/>
+    <circle cx="340" cy="150" r="1" opacity="0.35"/>
+    <circle cx="520" cy="40" r="1.4" opacity="0.45"/>
+    <circle cx="610" cy="120" r="0.9" opacity="0.35"/>
+    <circle cx="760" cy="70" r="1.1" opacity="0.4"/>
+    <circle cx="880" cy="160" r="0.9" opacity="0.3"/>
+    <circle cx="960" cy="30" r="1.3" opacity="0.45"/>
+    <circle cx="1180" cy="110" r="1" opacity="0.35"/>
+    <circle cx="1300" cy="50" r="1.2" opacity="0.4"/>
+    <circle cx="1440" cy="140" r="0.9" opacity="0.3"/>
+    <circle cx="1530" cy="80" r="1.3" opacity="0.45"/>
+    <circle cx="60" cy="210" r="0.8" opacity="0.25"/>
+    <circle cx="1580" cy="220" r="0.8" opacity="0.25"/>
+  </g>
+
+  <circle cx="1330" cy="150" r="90" fill="url(#halo)"/>
+  <mask id="crescent">
+    <rect width="1600" height="600" fill="#fff"/>
+    <circle cx="1343" cy="142" r="24" fill="#000"/>
+  </mask>
+  <circle cx="1330" cy="150" r="26" fill="#eadcbf" opacity="0.7" mask="url(#crescent)"/>
+
+  <rect x="0" y="300" width="1600" height="300" fill="url(#haze)"/>
+
+  <!-- Distant rooftops -->
+  <path fill="#1f1820" d="M0 600 V440 L50 410 L100 440 H160 V400 L210 365 L260 400 V430 H330 L380 390 L430 430 H500 V385 H515 V360 H530 V385 L580 415 H650 L700 375 L750 415 V435 H830 L880 395 L930 435 H1000 V405 L1050 375 L1060 380 H1180 L1230 405 H1290 V390 L1340 360 L1390 390 V425 H1460 L1510 390 L1560 425 L1600 410 V600 Z"/>
+
+  <!-- Near houses and the clocktower -->
+  <path fill="#0e0a0d" d="M0 600 V500 L40 470 L80 500 V460 H130 V430 L165 400 L200 430 V490 H250 V450 L290 415 L330 450 V500 H380 V440 H400 V410 H415 V440 H440 V480 L480 445 L520 480 V520 H560 V470 L610 430 L660 470 V500 H700 V460 H740 V430 L780 395 L820 430 V510 H870 V480 L905 450 L940 480 V500 H980 V450 L1020 420 L1052 445 V330 H1046 V318 H1058 V300 L1100 215 L1142 300 V318 H1154 V330 H1148 V460 H1180 V490 L1220 455 L1260 490 V440 H1300 V415 H1312 V440 H1330 V500 L1370 465 L1410 500 V470 H1450 V450 L1490 415 L1530 450 V490 H1570 V460 L1600 445 V600 Z"/>
+
+  <!-- Clock face on the tower -->
+  <circle cx="1100" cy="370" r="40" fill="url(#dial)"/>
+  <circle cx="1100" cy="370" r="20" fill="#2a1d14" stroke="#c9a45f" stroke-opacity="0.7" stroke-width="2"/>
+  <g stroke="#ecd59a" stroke-opacity="0.8" stroke-linecap="round">
+    <line x1="1100" y1="370" x2="1099" y2="357" stroke-width="2.4"/>
+    <line x1="1100" y1="370" x2="1093" y2="354" stroke-width="1.6"/>
+  </g>
+  <rect x="1094" y="410" width="12" height="20" rx="6" fill="#e0a85a" opacity="0.35"/>
+
+  <!-- Lit windows -->
+  <g fill="#e0a85a">
+    <rect x="96" y="515" width="10" height="14" opacity="0.45"/>
+    <rect x="178" y="450" width="9" height="12" opacity="0.3"/>
+    <rect x="300" y="470" width="10" height="14" opacity="0.4"/>
+    <rect x="455" y="500" width="9" height="12" opacity="0.25"/>
+    <rect x="600" y="490" width="10" height="14" opacity="0.45"/>
+    <rect x="630" y="490" width="10" height="14" opacity="0.2"/>
+    <rect x="770" y="450" width="9" height="12" opacity="0.35"/>
+    <rect x="905" y="505" width="10" height="13" opacity="0.3"/>
+    <rect x="1010" y="470" width="9" height="12" opacity="0.4"/>
+    <rect x="1222" y="505" width="10" height="14" opacity="0.35"/>
+    <rect x="1380" y="515" width="9" height="12" opacity="0.3"/>
+    <rect x="1500" y="470" width="10" height="14" opacity="0.4"/>
+  </g>
+</svg>

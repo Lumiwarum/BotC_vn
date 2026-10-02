@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <base href="../">
   <title>Town visual fixture</title>
   <link rel="stylesheet" href="css/styles.css">
@@ -9,11 +10,32 @@
 <body data-page="visual">
   <main id="app"></main>
   <script src="scenarios/demo.js"></script>
+  <script src="scenarios/third.js"></script>
+  <script src="js/roles.js"></script>
   <script src="js/engine.js"></script>
   <script src="js/game.js"></script>
   <script>
-    const fixture = GameApp.mount(document.querySelector("#app"), DEMO_SCENARIO, { autoStart: true });
-    if (location.search.includes("role")) {
+    const fixture = GameApp.mount(document.querySelector("#app"), location.search.includes("third") ? THIRD_SCENARIO : DEMO_SCENARIO, { autoStart: true });
+    if (location.search.includes("ending") || location.search.includes("decision") || location.search.includes("vote")) {
+      fixture.engine.wakeUp();
+      [["max", [2,0]], ["sasha", [1,0]], ["katya", [1,0]]].forEach(([id, choices]) => {
+        fixture.engine.startConversation(id);
+        choices.forEach(index => fixture.engine.chooseChoice(index));
+      });
+      if (location.search.includes("ending")) {
+        fixture.engine.approachAlly("max");
+        fixture.engine.playerNominate("sasha");
+        fixture.renderEnding(fixture.engine.endDay());
+      } else if (location.search.includes("tally")) {
+        fixture.engine.approachAlly("max");
+        fixture.renderNominationResult(fixture.engine.playerNominate("sasha"));
+      } else if (location.search.includes("vote")) {
+        fixture.engine.approachAlly("max");
+        fixture.renderDay();
+      } else {
+        fixture.renderDecision();
+      }
+    } else if (location.search.includes("role")) {
       // Keep the automatic role reveal on screen.
     } else if (location.search.includes("dialogue")) {
       fixture.engine.wakeUp();
@@ -22,6 +44,7 @@
     } else {
       fixture.engine.wakeUp();
       fixture.renderTown();
+      fixture.clearTimer();
     }
   </script>
 </body>

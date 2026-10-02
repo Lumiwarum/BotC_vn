@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 800" role="img" aria-label="Макс говорит уверенно">
-  <rect width="640" height="800" fill="#273238"/><path d="M0 90L640 310V0H0z" fill="#d2b36f" opacity=".12"/>
-  <path d="M78 800c18-180 98-269 242-269s224 89 242 269" fill="#374a54"/><path d="M237 493h166l28 125-111 66-111-66z" fill="#c99470"/>
-  <ellipse cx="320" cy="326" rx="143" ry="177" fill="#d3a17c"/><path d="M178 314c0-151 61-220 147-220 103 0 153 65 151 210-37-73-90-111-163-114-48 26-89 68-135 124z" fill="#1f252a"/>
-  <path d="M231 303q37-20 75 3M337 306q39-20 78-3" fill="none" stroke="#4c342b" stroke-width="11" stroke-linecap="round"/><circle cx="271" cy="337" r="8" fill="#222"/><circle cx="376" cy="337" r="8" fill="#222"/>
-  <path d="M286 414q35 31 72 0" fill="none" stroke="#815049" stroke-width="8" stroke-linecap="round"/><path d="M225 445q95 62 190 0" fill="none" stroke="#7d523f" stroke-width="18" opacity=".3"/>
-  <rect x="30" y="31" width="580" height="738" fill="none" stroke="#d2b36f" opacity=".38"/><text x="52" y="735" fill="#eadfc6" font-family="Georgia,serif" font-size="40">МАКС</text><text x="53" y="765" fill="#d7b970" font-family="Arial,sans-serif" font-size="14" letter-spacing="4">ПРОТОТИП · УВЕРЕННО</text>
-</svg>

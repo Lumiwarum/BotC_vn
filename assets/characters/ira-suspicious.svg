@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 800" role="img" aria-label="Ира смотрит подозрительно">
-  <rect width="640" height="800" fill="#2b2731"/><circle cx="510" cy="122" r="154" fill="#a13d42" opacity=".15"/>
-  <path d="M94 800c12-181 88-272 226-272s214 91 226 272" fill="#4d2e3a"/><path d="M232 510h176l28 111-116 66-116-66z" fill="#d7aa86"/>
-  <ellipse cx="320" cy="340" rx="143" ry="178" fill="#dcb18d"/><path d="M178 348c-11-176 56-244 148-244 105 0 159 74 143 249-25-45-44-102-47-148-66 59-139 79-244 80z" fill="#30252c"/>
-  <path d="M230 319l78 18M337 337l80-31" stroke="#4b3031" stroke-width="12" stroke-linecap="round"/><ellipse cx="274" cy="354" rx="11" ry="8" fill="#241b1d"/><ellipse cx="374" cy="350" rx="11" ry="8" fill="#241b1d"/>
-  <path d="M292 439q31-11 61 0" fill="none" stroke="#8f5556" stroke-width="8" stroke-linecap="round"/>
-  <rect x="30" y="31" width="580" height="738" rx="3" fill="none" stroke="#c2595f" opacity=".45"/><text x="52" y="735" fill="#eadfc6" font-family="Georgia,serif" font-size="40">ИРА</text><text x="53" y="765" fill="#d36b70" font-family="Arial,sans-serif" font-size="14" letter-spacing="4">ПРОТОТИП · ПОДОЗРЕНИЕ</text>
-</svg>

@@ -127,7 +127,7 @@
           </div>
         </div>
         <div class="editor-card">
-          <h3>Главный герой · пятый игрок</h3>
+          <h3>Главный герой</h3>
           <div class="form-grid">
             ${input("Имя / подпись", "player.name", scenario.player?.name || "Вы")}
             ${input("Название роли", "player.roleName", scenario.player?.roleName)}
@@ -329,7 +329,72 @@
       if (!Number.isFinite(Number(scenario.settings?.selectionSeconds)) || Number(scenario.settings?.selectionSeconds) < 1) add("error", "Таймер должен быть не меньше одной секунды.");
       if (!Number.isFinite(Number(scenario.settings?.conversationsPerDay)) || Number(scenario.settings?.conversationsPerDay) < 1) add("error", "Количество разговоров должно быть положительным.");
       if (!characters.length) add("error", "Добавьте хотя бы одного персонажа.");
-      if (characters.length + 1 !== 5) add("warning", `В клубном MVP ожидается пять игроков: главный герой и четыре собеседника. Сейчас: ${characters.length + 1}.`);
+      if (characters.length !== 4) add("warning", "За столом ожидаются пять игроков: главный герой и четверо собеседников.");
+
+      const allEffects = [];
+      Object.values(scenario.dialogues || {}).forEach((dialogue) => {
+        Object.values(dialogue?.nodes || {}).forEach((node) => {
+          (node.choices || []).forEach((choice) => { (choice.effects || []).forEach((effect) => allEffects.push(effect)); });
+        });
+      });
+      (scenario.events || []).forEach((event) => {
+        (event.effects || []).forEach((effect) => allEffects.push(effect));
+      });
+      const knows = (id) => characters.some((character) => character.id === id);
+      const trustEffects = allEffects.filter((effect) => effect?.type === "trust");
+      const suspicionEffects = allEffects.filter((effect) => effect?.type === "suspicion");
+      trustEffects.forEach((effect) => {
+        if (!knows(effect.characterId)) {
+          add("error", `Эффект доверия ссылается на неизвестного персонажа «${effect.characterId}».`);
+        }
+      });
+      suspicionEffects.forEach((effect) => {
+        if (!knows(effect.characterId)) add("error", `Эффект подозрения ссылается на неизвестного персонажа «${effect.characterId}».`);
+        if (effect.targetId !== "you" && !knows(effect.targetId)) add("error", `Подозрение направлено на неизвестного игрока «${effect.targetId}».`);
+        if (effect.characterId === effect.targetId) add("error", `${effect.characterId} не может подозревать сам себя.`);
+      });
+      characters.forEach((character) => {
+        Object.keys(character.views || {}).forEach((targetId) => {
+          if (!knows(targetId)) add("error", `У ${character.name || character.id} в views неизвестный игрок «${targetId}».`, character.id);
+          if (targetId === character.id) add("error", `${character.name || character.id} не может подозревать сам себя.`, character.id);
+        });
+      });
+      if (trustEffects.length && !scenario.vote) {
+        add("warning", "Есть эффекты доверия, но нет блока vote: день пройдёт по значениям по умолчанию.");
+      }
+      const anyViews = characters.some((character) => Object.values(character.views || {}).some((value) => Number(value) > 0));
+      if (scenario.vote && !anyViews && !suspicionEffects.length) {
+        add("warning", "Ни у кого нет подозрений друг к другу (views/suspicion): персонажи будут номинировать только вас.");
+      }
+      if (trustEffects.length) {
+        const gate = Number(scenario.decision?.allyTrust ?? 0);
+        characters.forEach((character) => {
+          const reachable = Number(character.startingTrust || 0) + trustEffects
+            .filter((effect) => effect.characterId === character.id && Number(effect.value) > 0)
+            .reduce((sum, effect) => sum + Number(effect.value), 0);
+          const required = Number(character.allyTrust ?? gate);
+          if (reachable < required) {
+            add("warning", `${character.name || character.id} никогда не наберёт доверия для союза (${reachable} < ${required}).`, character.id);
+          }
+          if (!character.allyHint) {
+            add("warning", `У ${character.name || character.id} нет allyHint — подсказка под кнопкой подхода будет пустой.`, character.id);
+          }
+        });
+      }
+
+      const seats = Array.isArray(scenario.table?.seats) ? scenario.table.seats : [];
+      if (!seats.length) {
+        add("warning", "Не задана рассадка (table.seats). Порядок мест возьмётся из списка персонажей.");
+      } else {
+        if (!seats.includes("you")) add("error", "В table.seats нет места «you» — игроку негде сидеть.");
+        if (new Set(seats).size !== seats.length) add("error", "В table.seats место повторяется.");
+        characters.forEach((character) => {
+          if (character.id && !seats.includes(character.id)) add("error", `Персонажа «${character.id}» нет в рассадке table.seats.`, character.id);
+        });
+        seats.forEach((seat) => {
+          if (seat !== "you" && !characters.some((character) => character.id === seat)) add("error", `В table.seats указано неизвестное место «${seat}».`);
+        });
+      }
 
       characters.forEach((character) => {
         if (!character.id) add("error", "У персонажа отсутствует ID.");
@@ -404,14 +469,19 @@
           </div>
         </article>`).join("");
       return `
-        ${this.sectionHeader("06 · Концовки", "Последствия решения", "Расположите частные исходы выше общих.", '<button class="button button--primary" data-action="add-ending">+ Концовка</button>')}
+        ${this.sectionHeader("06 · Концовки", "Последствия решения", "Личный итог эпизода. Тон victory/defeat — успех или ошибка героя, а не победа команды.", '<button class="button button--primary" data-action="add-ending">+ Концовка</button>')}
+        <div class="editor-card"><h3>Последний выбор героя</h3><div class="form-grid">
+          ${input("Вопрос", "decision.title", this.draft.decision?.title || "")}
+          ${input("Текст кнопок", "decision.actionLabel", this.draft.decision?.actionLabel || "Довериться")}
+          ${input("Пояснение", "decision.prompt", this.draft.decision?.prompt || "", { wide: true, type: "textarea" })}
+        </div><p class="empty-note">Заявления собеседников и allowNobody доступны на вкладке полного JSON. Условие концовки: {"type":"decision","operator":"equals","value":"max"}.</p></div>
         <div class="editor-stack">${cards || '<p class="empty-note">Концовок пока нет.</p>'}</div>`;
     }
 
     renderJSON() {
       return `
         ${this.sectionHeader("07 · Полный JSON", "Точный контроль", "Здесь доступны правила старта, публичные заявления и любые поддерживаемые условия.", '<button class="button button--primary" data-action="apply-json">Применить JSON</button>')}
-        <div class="json-help"><code>variable</code><code>conversationCount</code><code>spokenTo</code><code>totalConversations</code><code>nomination</code></div>
+        <div class="json-help"><code>variable</code><code>conversationCount</code><code>spokenTo</code><code>totalConversations</code><code>decision</code></div>
         <textarea class="json-editor" id="full-json" spellcheck="false">${escapeHTML(JSON.stringify(this.draft, null, 2))}</textarea>`;
     }
 
@@ -719,7 +789,7 @@
       if (!window.confirm(`Удалить персонажа «${character.name}» и его диалоги?`)) return;
       this.draft.characters.splice(index, 1);
       delete this.draft.dialogues[character.id];
-      if (this.draft.nomination?.statements) this.draft.nomination.statements = this.draft.nomination.statements.filter((item) => item.characterId !== character.id);
+      if (this.draft.decision?.statements) this.draft.decision.statements = this.draft.decision.statements.filter((item) => item.characterId !== character.id);
       if (this.draft.reveal) this.draft.reveal = this.draft.reveal.filter((item) => item.characterId !== character.id);
       this.selectedCharacterId = this.draft.characters[0].id;
       this.selectedNodeId = this.draft.dialogues[this.selectedCharacterId].start;
