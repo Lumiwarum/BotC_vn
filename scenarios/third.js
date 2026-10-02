@@ -131,7 +131,8 @@ window.THIRD_SCENARIO = {
     "sashaDoubts": false,
     "exposedToKatya": false,
     "exposedToGood": false,
-    "sharedSafeBluff": false
+    "sharedSafeBluff": false,
+    "maxBluff": "none"
   },
   "dialogues": {
     "ira": {
@@ -524,6 +525,13 @@ window.THIRD_SCENARIO = {
           "choices": [
             {
               "text": "«Савант свободен. Тебя мне тоже не показали.»",
+              "conditions": [
+                {
+                  "type": "variable",
+                  "key": "sharedSafeBluff",
+                  "operator": "falsy"
+                }
+              ],
               "endConversation": true,
               "effects": [
                 {
@@ -535,6 +543,11 @@ window.THIRD_SCENARIO = {
                   "type": "set",
                   "key": "sharedSafeBluff",
                   "value": true
+                },
+                {
+                  "type": "set",
+                  "key": "maxBluff",
+                  "value": "savant"
                 },
                 {
                   "type": "trust",
@@ -573,6 +586,29 @@ window.THIRD_SCENARIO = {
                   "type": "suspicion",
                   "characterId": "max",
                   "targetId": "ira",
+                  "value": 2
+                }
+              ]
+            },
+            {
+              "text": "«Держись Рыбака — ты его уже назвал. Тебя мне тоже не показали.»",
+              "conditions": [
+                {
+                  "type": "variable",
+                  "key": "sharedSafeBluff",
+                  "operator": "truthy"
+                }
+              ],
+              "endConversation": true,
+              "effects": [
+                {
+                  "type": "set",
+                  "key": "maxKnowsDemon",
+                  "value": true
+                },
+                {
+                  "type": "trust",
+                  "characterId": "max",
                   "value": 2
                 }
               ]
@@ -617,7 +653,7 @@ window.THIRD_SCENARIO = {
         "max_warm": {
           "speaker": "max",
           "emotion": "confident",
-          "text": "Теперь я почти уверен, что ты — тот, кого мне не показали. Скажи, что мне говорить про ночь, и я подстроюсь.",
+          "text": "Теперь я почти уверен, что ты — тот, кого мне не показали. Скажи, какую роль мне заявить, и я подстроюсь.",
           "choices": [
             {
               "text": "«Говори, что ты Рыбак. Эту роль сегодня никто не называл.»",
@@ -632,11 +668,16 @@ window.THIRD_SCENARIO = {
                   "type": "set",
                   "key": "sharedSafeBluff",
                   "value": true
+                },
+                {
+                  "type": "set",
+                  "key": "maxBluff",
+                  "value": "fisherman"
                 }
               ]
             },
             {
-              "text": "«Молчи про ночь. Пусть все спрашивают Иру.»",
+              "text": "«Не заявляй роль. Пусть все спрашивают Иру.»",
               "endConversation": true,
               "effects": [
                 {
@@ -1392,13 +1433,33 @@ window.THIRD_SCENARIO = {
       "when": [
         {
           "type": "variable",
-          "key": "sharedSafeBluff",
+          "key": "maxBluff",
           "operator": "equals",
-          "value": true
+          "value": "savant"
         }
       ],
       "title": "Знакомая версия",
-      "text": "У общего стола Макс уже произносит: «Моя роль получает информацию в первую ночь». Он воспользовался вашей подсказкой.",
+      "text": "У общего стола Макс уже называет себя Савантом: днём он ходит к Рассказчику и приносит два факта, один из которых ложный. Он воспользовался вашей подсказкой.",
+      "characterIds": [
+        "max"
+      ],
+      "effects": []
+    },
+    {
+      "id": "borrowed-role-fisherman",
+      "trigger": "afterConversation",
+      "once": true,
+      "visible": true,
+      "when": [
+        {
+          "type": "variable",
+          "key": "maxBluff",
+          "operator": "equals",
+          "value": "fisherman"
+        }
+      ],
+      "title": "Знакомая версия",
+      "text": "У общего стола Макс уже называет себя Рыбаком: свой единственный совет от Рассказчика он, по его словам, бережёт для решающего дня. Он воспользовался вашей подсказкой.",
       "characterIds": [
         "max"
       ],
@@ -1802,7 +1863,7 @@ window.THIRD_SCENARIO = {
       "label": "Итог дня",
       "title": "День без единой номинации",
       "text": "Никто не назвал никого. Стол разошёлся, так и не проверив ни одной версии, и Рассказчик объявил ночь. Для Левиафана это не потеря — но и не выигрыш: добрым досталась целая ночь на размышления.",
-      "epilogue": "Молчаливый день выгоден тому, у кого есть план на ночь."
+      "epilogue": "Левиафан ночью не убивает: тихий день лишь приближает пятый, а быстрее к победе ведут казни добрых."
     },
     {
       "id": "ally-quiet-day",
