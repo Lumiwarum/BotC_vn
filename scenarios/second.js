@@ -68,7 +68,7 @@ window.SECOND_SCENARIO = {
     {
       "id": "ira",
       "name": "Ира",
-      "tagline": "Её версия слишком хорошо сходится",
+      "tagline": "Говорит быстро и уверенно",
       "sprites": {
         "neutral": "assets/characters/vn/second/ira/neutral.png",
         "warm": "assets/characters/vn/second/ira/warm.png",
@@ -1809,7 +1809,7 @@ window.SECOND_SCENARIO = {
   },
   "vote": {
     "title": "Последняя казнь",
-    "prompt": "Назовите живого игрока. Казнь Иры спасёт добро; казнь доброго или пропуск закончат партию.",
+    "prompt": "Назовите живого игрока. Казнь Демона спасёт добро; казнь доброго или пропуск закончат партию.",
     "abstainLabel": "Промолчать",
     "majority": 2,
     "voteAt": 1,

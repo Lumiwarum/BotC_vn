@@ -73,14 +73,14 @@ window.THIRD_SCENARIO = {
     {
       "id": "max",
       "name": "Макс",
-      "tagline": "Ищет подходящее слово",
+      "tagline": "Присматривается к каждому",
       "sprites": {
         "neutral": "assets/characters/vn/third/max/neutral.png",
         "confident": "assets/characters/vn/third/max/confident.png",
         "nervous": "assets/characters/vn/third/max/nervous.png"
       },
       "startingTrust": 0,
-      "allyHint": "Макс ищет своего, но вы так и не дали ему понять, что вы — тот самый.",
+      "allyHint": "Макс ждал от вас чего-то конкретного, а получил только общие слова.",
       "allyHintUnmet": "Вы так и не поговорили с Максом.",
       "views": {
         "ira": 1,
